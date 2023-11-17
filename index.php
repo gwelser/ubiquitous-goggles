@@ -10,7 +10,7 @@ class Index
 
     public function __construct(int $id, int $name, bool $active = true)
     {
-        $this->id = $id;
+        $this->setId($id);
         $this->setName($name);
         $this->active = $active;
     }
