@@ -1,30 +1,45 @@
 name: Coding Standard & Static Analysis
 
 on:
-    push:
-        paths:
-        - '**.php'
+  workflow_call:
+    inputs:
+      check_tests:
+        description: 'Whether to run static analysis for tests'
+        required: false
+        type: boolean
+      phive_keys:
+        description: 'GPG key signatures for phive packages. Should be comma separated string "800d,d44d"'
+        required: false
+        default: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
+        type: string
   
 permissions:
   contents: read
 
 jobs:
-  cs-stan:
+  psalm:
     name: Coding Standard & Static Analysis
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, intl
+        coverage: none
+        tools: phive, cs2pr
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Composer install
       uses: ramsey/composer-install@v2
 
-    - name: Install Psalm phar
-      run: |
-        wget https://github.com/vimeo/psalm/releases/latest/download/psalm.phar
-        chmod +x psalm.phar
-        mv psalm.phar /usr/local/bin/psalm.phar
+    - name: Install PHP tools with phive.
+      run: "phive install --trust-gpg-keys '${{ inputs.phive_keys }}'"
 
     - name: Run psalm
       if: always()
-      run: psalm.phar --output-format=github
+      run: tools/psalm --output-format=github

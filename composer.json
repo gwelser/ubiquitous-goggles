@@ -1,6 +1,5 @@
 {
     "require-dev": {
-        "squizlabs/php_codesniffer": "*",
-        "vimeo/psalm": "^5.15"
+        "squizlabs/php_codesniffer": "*"
     }
 }
