@@ -1,0 +1,41 @@
+name: Coding Standard & Static Analysis
+
+on:
+    push:
+        paths:
+        - '**.php'
+  
+permissions:
+  contents: read
+
+jobs:
+  cs-stan:
+    name: Coding Standard & Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, intl
+        coverage: none
+        tools: phive, cs2pr
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Composer install
+      uses: ramsey/composer-install@v2
+
+    - name: Install PHP tools with phive.
+      run: "phive install --trust-gpg-keys '${{ inputs.phive_keys }}'"
+
+    - name: Run phpcs
+      if: always()
+      run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
+
+    - name: Run psalm
+      if: always()
+      run: tools/psalm --output-format=github
