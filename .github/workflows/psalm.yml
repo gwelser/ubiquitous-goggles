@@ -3,10 +3,6 @@ name: Coding Standard & Static Analysis
 on:
   workflow_dispatch:
     inputs:
-      check_tests:
-        description: 'Whether to run static analysis for tests'
-        required: false
-        type: boolean
       phive_keys:
         description: 'GPG key signatures for phive packages. Should be comma separated string "800d,d44d"'
         required: false
@@ -35,11 +31,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Composer install
-      uses: ramsey/composer-install@v2
-
-    - name: Install PHP tools with phive.
-      run: "phive install --trust-gpg-keys '${{ inputs.phive_keys }}'"
+      uses: |
+        composer install --no-interaction --no-progress --optimize-autoloader --prefer-dist
 
     - name: Run psalm
-      if: always()
-      run: tools/psalm --output-format=github
+      run: vendor/bin/psalm --output-format=github
