@@ -12,7 +12,7 @@ class Index
     {
         $this->setId($id);
         $this->setName($name);
-        $this->active = $active;
+        $this->setActive($active);
     }
 
     public function getId(): int
