@@ -16,19 +16,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1'
-        extensions: mbstring, intl
-        coverage: none
-        tools: phive, cs2pr
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Composer install
+      uses: ramsey/composer-install@v2
 
-    - name: Install PHP tools with phive.
-      run: "phive install"
+    - name: Install Psalm phar
+      run: |
+        wget https://github.com/vimeo/psalm/releases/latest/download/psalm.phar
+        chmod +x psalm.phar
 
     - name: Run psalm
       if: always()
-      run: tools/psalm --output-format=github
+      run: ./psalm.phar --output-format=github
