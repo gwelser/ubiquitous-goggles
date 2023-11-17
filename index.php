@@ -11,7 +11,7 @@ class Index
     public function __construct(int $id, int $name, bool $active = true)
     {
         $this->id = $id;
-        $this->name = $name;
+        $this->setName($name);
         $this->active = $active;
     }
 
