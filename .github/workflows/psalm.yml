@@ -26,15 +26,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Composer install
-      uses: ramsey/composer-install@v2
-
     - name: Install PHP tools with phive.
-      run: "phive install --trust-gpg-keys '${{ inputs.phive_keys }}'"
-
-    - name: Run phpcs
-      if: always()
-      run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
+      run: "phive install"
 
     - name: Run psalm
       if: always()
